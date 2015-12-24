@@ -36,8 +36,7 @@
 
         #topContainer{
             background-image: url("images/back.jpeg");
-            background-attachment: fixed;
-            height:800px;
+            height:300px;
             width:100%;
             background-size:cover;
 
@@ -96,57 +95,50 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-
-
 <div class="container" id="topContainer">
+
+</div>
+
+<div class="container">
     <div class="row" id="topRow">
-        <div class="col-md-1 col-md-offset-1 whiteBackground">
+
+        <h3>Address: 348 61st St.</h3>
+        <div class="col-md-2">
             <div class="btn-group-vertical text-center" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal">New</button>
-                <button type="button" class="btn btn-default">Block</button>
-                <button type="button" class="btn btn-default">Hood</button>
-                <button type="button" class="btn btn-default">Friend</button>
+                <form method="post">
+                    <input type="submit" class="btn btn-default form-control" value="Hood">
+                    <input type="submit" class="btn btn-default form-control" value="Block">
+                    <input type="submit" class="btn btn-default form-control" value="Friend">
+                </form>
+
             </div>
         </div>
 
-        <div class="col-md-6 whiteBackground">
-            <div>
-                <h4>Subject</h4>
-                <h5>Title</h5>
-                <p>This is a test message...</p>
-                <span class="label label-default">23:34 2015-10-23</span>
+        <div class="col-md-9 whiteBackground">
+            <?php
+            if($success){
+                echo "<div class='alert alert-success'>".$success."</div>";
+            }
 
-                <button name="reply" type="button"  class="btn btn-primary btn-sm" data-toggle="modal" data-target="#replyModal" >Reply</button>
-            </div>
-
-            <div>
-                <h4>Subject</h4>
-                <h5>Title</h5>
-                <p>This is a test message...</p>
-                <span class="label label-default">23:34 2015-10-23</span>
-
-                <button name="reply" type="button"  class="btn btn-primary btn-sm" data-toggle="modal" data-target="#replyModal" >Reply</button>
-            </div>
-
-            <div>
-                <h4>Subject</h4>
-                <h5>Title</h5>
-                <p>This is a test message...</p>
-                <span class="label label-default">23:34 2015-10-23</span>
-
-                <button name="reply" type="button"  class="btn btn-primary btn-sm" data-toggle="modal" data-target="#replyModal" >Reply</button>
-            </div>
+            if($error){
+                echo "<div class='alert alert-danger'>".$error."</div>";
+            }
+            ?>
 
             <?php
                 while($results = mysqli_fetch_array($result)){
+                    //$_SESSION['replyid']=$results['PostId'];
                     echo "<div>
                 <h4>".$results['Subject']."</h4>
                 <h5>".$results['Title']."</h5>
                 <p>".$results['Data']."</p>
                 <span class=\"label label-default\">".$results['PostTime']."</span>
 
-                <button name=\"reply\" type=\"button\"  class=\"btn btn-primary btn-sm\" data-toggle=\"modal\" data-target=\"#replyModal\" >Reply</button>
+                <button name=\"reply\" type=\"button\"  class=\"btn btn-primary btn-sm\" data-toggle=\"modal\" data-target=\"#replyModal\" data-whatever='".$results['Name']."'>Reply</button>
+
             </div>";
+
                 }
             ?>
 
@@ -165,23 +157,23 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Subject</label>
-                        <input type="text" name="replysubject" placeholder="subject">
+                        <input class="form-control" type="text" name="replysubject" placeholder="subject">
                     </div>
 
                     <div class="form-group">
                         <label>Title</label>
-                        <input type="text" name="replytitle" placeholder="title">
+                        <input class="form-control" type="text" name="replytitle" placeholder="title">
                     </div>
 
                     <div class="form-group">
                         <label>Content</label>
-                        <textarea name="replycontent" rows="10" cols="80" class="center-block">Write something here</textarea>
+                        <textarea class="form-control" name="replycontent" rows="10" cols="80" class="center-block">Write something here</textarea>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary" value="Reply">
+                    <input type="submit" name="submit" class="btn btn-primary" value="Reply">
                 </div>
             </form>
 
@@ -200,23 +192,23 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Subject</label>
-                        <input type="text" name="newsubject" placeholder="subject">
+                        <input class="form-control" type="text" name="newsubject" placeholder="subject" value="">
                     </div>
 
                     <div class="form-group">
                         <label>Title</label>
-                        <input type="text" name="newtitle" placeholder="title">
+                        <input class="form-control" type="text" name="newtitle" placeholder="title">
                     </div>
 
                     <div class="form-group">
                         <label>Content</label>
-                        <textarea name="newcontent" rows="10" cols="80" class="center-block">Write something here</textarea>
+                        <textarea class="form-control" name="newcontent" rows="10" cols="80" class="center-block">Write something here</textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
 
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary" value="Post">
+                    <input type="submit" name="submit" class="btn btn-primary" value="Post">
                 </div>
             </form>
 
@@ -230,6 +222,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="js/bootstrap.min.js"></script>
+
+<script>
+    $('#replyModal').on('show.bs.modal',function(event){
+        var button = $(event.relatedTarget)
+        var recipient = button.data('whatever')
+
+        var modal = $(this)
+
+        modal.find('.modal-title').text('Reply Message to ' + recipient)
+    })
+</script>
+
 </body>
 </html>
 

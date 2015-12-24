@@ -9,6 +9,9 @@ session_start();
 
 include("connection.php");
 
+$success = '';
+$error = '';
+
 $getexsitinginfo = "SELECT * FROM User WHERE UserId = '".$_SESSION['id']."'";
 
 $result = mysqli_query($link, $getexsitinginfo);
