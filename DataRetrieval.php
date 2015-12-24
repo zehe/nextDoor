@@ -163,7 +163,88 @@ function insertApproveList($conn, $UserId, $RequestId){
     mysqli_stmt_close($stmt);
     return false;
 }
+/*
+ *  functions for Messages & Thread
+ */
+function showSentMessage($conn, $UserId){
+    $res = mysqli_query($conn,"select * from Message where postId = ".$UserId);
+    return $res;
+}
 
+function showBlockMessage($conn,$BlockId){
+    $res = mysqli_query($conn,"select * from Message natural join Thread where VisibleType = 'block' and VisibleTo = ".$BlockId);
+    return $res;
+}
+
+function showHoodMeaage($conn,$BlockId){
+    $res = mysqli_query($conn,"select hoodid from Block where Blockid = ".$BlockId);
+    $row = mysqli_fetch_array($res);
+    $res = mysqli_query($conn, "select * from Message natural join Thread WHERE VisibleType = 'hood' and VisibleTo = ".$row[0]);
+    return $res;
+}
+
+function showFriendMessage($conn, $UserId){
+    $res = mysql_query($conn, "select * from Message natural join Thread where VisibleType = 'friend' and VisibleTo = ".$UserId);
+    return $res;
+}
+
+function showNeighborMessage($conn, $UserId){
+    $res = mysqli_query($conn, "select * from Message NATURAL join Thread where VisibleType = 'neighbor' and VisibleTo = ".$UserId);
+    return $res;
+}
+
+//return all the meaage in a thread
+function showThreadMessage($conn,$ThreadId){
+    $res = mysqli_query($conn,"select * from Message where ThreadId = ".$ThreadId);
+    return $res;
+}
+//reply a single message
+function replyMessage($conn, $UserId, $ThreadId, $MessageId, $Title, $Subject,$data,$Longitude,$Latitude){
+    $stmt = mysqli_prepare($conn,"insert into Message(Subject, Title, Postid,PostTime,Longitude,Latitude,ReplyId, Data,ThreadId) VALUES
+              (?,?,?,now(),?,?,?,?,? )");
+    mysqli_stmt_bind_param($stmt,"ssiddssi",$Subject,$Title,$UserId,$Longitude,$Latitude,$MessageId,$data,$ThreadId);
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
+        return true;
+    }
+    mysqli_stmt_close($stmt);
+    return false;
+}
+//reply a thread
+function replyThread($conn, $UserId, $ThreadId, $Title, $Subject,$data,$Longitude,$Latitude)
+{
+    $stmt = mysqli_prepare($conn, "insert into Message(Subject, Title, Postid,PostTime,Longitude,Latitude, Data,ThreadId) VALUES
+              (?,?,?,now(),?,?,?,? )");
+    mysqli_stmt_bind_param($stmt, "ssiddsi", $Subject, $Title, $UserId, $Longitude, $Latitude, $data, $ThreadId);
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
+        return true;
+    }
+    mysqli_stmt_close($stmt);
+    return false;
+}
+//create a thread
+function insertThread($conn, $initialMessage,$Type, $Visibleto){
+    $stmt = mysqli_prepare($conn,"insert into Thread (InitialMessage,VisibleType,VisibleTo) VALUES (? ,? ,?)");
+    mysqli_stmt_bind_param($stmt,"sss",$initialMessage,$Type,$Visibleto);
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
+        return true;
+    }
+    mysqli_stmt_close($stmt);
+    return false;
+}
+
+/*
+ * other operations
+ */
+
+function sendMail($conn,$UserId){
+    $res = mysqli_query($conn,"select email from user where UserId = ".$UserId);
+    $row = mysqli_fetch_row($res);
+    $email = $row[0];
+    mail($email,"NEW Message","You got a new message");
+}
 ?>
 
 
