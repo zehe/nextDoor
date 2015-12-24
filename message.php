@@ -102,7 +102,7 @@
     <div class="row" id="topRow">
         <div class="col-md-1 col-md-offset-1 whiteBackground">
             <div class="btn-group-vertical text-center" role="group" aria-label="...">
-                <button type="button" class="btn btn-default">New</button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal">New</button>
                 <button type="button" class="btn btn-default">Block</button>
                 <button type="button" class="btn btn-default">Hood</button>
                 <button type="button" class="btn btn-default">Friend</button>
@@ -137,6 +137,18 @@
                 <button name="reply" type="button"  class="btn btn-primary btn-sm" data-toggle="modal" data-target="#replyModal" >Reply</button>
             </div>
 
+            <?php
+                while($results = mysqli_fetch_array($result)){
+                    echo "<div>
+                <h4>".$results['Subject']."</h4>
+                <h5>".$results['Title']."</h5>
+                <p>".$results['Data']."</p>
+                <span class=\"label label-default\">".$results['PostTime']."</span>
+
+                <button name=\"reply\" type=\"button\"  class=\"btn btn-primary btn-sm\" data-toggle=\"modal\" data-target=\"#replyModal\" >Reply</button>
+            </div>";
+                }
+            ?>
 
         </div>
     </div>
@@ -151,17 +163,67 @@
             </div>
             <form method="post">
                 <div class="modal-body">
-                    <textarea name="textarea" rows="10" cols="50">Write something here</textarea>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" name="replysubject" placeholder="subject">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="replytitle" placeholder="title">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea name="replycontent" rows="10" cols="80" class="center-block">Write something here</textarea>
+                    </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <input type="submit" class="btn btn-primary" value="Reply">
                 </div>
             </form>
 
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="newModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">New</h4>
+            </div>
+            <form method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" name="newsubject" placeholder="subject">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="newtitle" placeholder="title">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea name="newcontent" rows="10" cols="80" class="center-block">Write something here</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary" value="Post">
+                </div>
+            </form>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
