@@ -6,7 +6,7 @@
  * Time: 4:41 PM
  */
  
- //test github
+ include("getmessage.php");
 ?>
 
 
@@ -110,9 +110,12 @@
         </div>
 
         <div class="col-md-6 whiteBackground">
-            <div>111</div>
-            <div>111</div>
-            <div>111</div>
+            <div>
+                <h4>Subject</h4>
+                <h5>Title</h5>
+                <p>This is a test message...</p>
+                
+            </div>
         </div>
     </div>
 </div>

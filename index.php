@@ -35,7 +35,7 @@ include("login.php");
 
         #topContainer{
             background-image: url("images/back.jpeg");
-            height:800px;
+            height:900px;
             width:100%;
             background-size:cover;
 

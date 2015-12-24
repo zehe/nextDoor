@@ -5,6 +5,7 @@
  * Date: 12/13/15
  * Time: 4:41 PM
  */
+include("updateinfo.php");
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +35,7 @@
         #topContainer{
             background-image: url("images/back.jpeg");
             background-attachment: fixed;
-            height:800px;
+            height:900px;
             width:100%;
             background-size:cover;
 
@@ -97,56 +98,71 @@
 <div class="container" id="topContainer">
    <div class="row" id="topRow">
        <div class="col-md-6 col-md-offset-3 whiteBackground">
-           <div class="form-group">
-               <label for="registeraddress">Name:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+           <form method="post">
+               <div class="form-group">
+                   <label for="updatename">Name:</label>
+                   <input type="text" class="form-control" placeholder="Name" name="updatename" value="<?php echo $results['Name'];?>"/>
+               </div>
 
-           <div class="form-group">
-               <label for="registeraddress">Age:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+               <div class="form-group">
+                   <label for="updateage">Age:</label>
+                   <input type="text" class="form-control" placeholder="Age" name="updateage" value="<?php echo $results['Age'];?>"/>
+               </div>
 
-           <div class="form-group">
-               <label for="registeraddress">Gender:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+               <div class="form-group">
+                   <label>Gender:</label>
+                   <label class="radio-inline"><input type="radio" name="updategender" value="male" <?php if($results['Gender'] == 'male'): ?> checked="checked" <?php endif; ?> >Male</label>
+                   <label class="radio-inline"><input type="radio" name="updategender" value="female" <?php if($results['Gender'] == 'female'): ?> checked="checked" <?php endif; ?>>Female</label>
+               </div>
 
-           <div class="form-group">
-               <label for="registeraddress">Phone1:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+               <div class="form-group">
+                   <label for="updatephone1">Phone1:</label>
+                   <input type="text" class="form-control" placeholder="Phone1" name="updatephone1" value="<?php echo $results['Phone1'];?>"/>
 
-           <div class="form-group">
-               <label for="registeraddress">Phone2:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+                   <label for="updatephone2">Phone2:</label>
+                   <input type="text" class="form-control" placeholder="Phone2" name="updatephone2" value="<?php echo $results['Phone2'];?>"/>
+               </div>
 
-           <div class="form-group">
-               <label for="registeraddress">Email:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+               <div class="form-group">
+                   <label for="updateemail">Email:</label>
+                   <input type="text" class="form-control" placeholder="Address" name="updateemail" value="<?php echo $results['Email'];?>" disabled/>
+               </div>
 
-           <div class="form-group">
-               <label for="registeraddress">Address:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+               <div class="form-group">
+                   <label for="updateaddress">Address:</label>
+                   <input type="text" class="form-control" placeholder="Address" name="updateaddress" value="<?php echo $results['Address'];?>"/>
+               </div>
 
-           <div class="form-group">
-               <label for="registeraddress">Intro:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+               <div class="form-group">
+                   <label for="updateintro">Intro:</label>
+                   <input type="text" class="form-control" placeholder="Intro" name="updateintro" value="<?php echo $results['Intro'];?>"/>
+               </div>
 
-           <div class="form-group">
-               <label for="registeraddress">Phone1:</label>
-               <input type="text" class="form-control" placeholder="Address" name="registeraddress" id="registeraddress"/>
-           </div>
+               <div class="form-group">
+                   <label>Notify Message:</label>
+                   <label class="radio-inline"><input type="radio" name="updatenotifymessage" value="notifyall" <?php if($results['NotifyMessage'] == 'notifyall'): ?> checked="checked" <?php endif; ?> >Notify All Message</label>
+                   <label class="radio-inline"><input type="radio" name="updatenotifymessage" value="notifyfriend" <?php if($results['NotifyMessage'] == 'notifyfriend'): ?> checked="checked" <?php endif; ?>>Notify Friends' Message only</label>
 
+                   <br />
+                   <label>Notify Type:</label>
+                   <label class="radio-inline"><input type="radio" name="updatenotifytype" value="email" <?php if($results['NotifyType'] == 'email'): ?> checked="checked" <?php endif; ?> >Notify by email</label>
+                   <label class="radio-inline"><input type="radio" name="updatenotifytype" value="sms" <?php if($results['NotifyType'] == 'sms'): ?> checked="checked" <?php endif; ?>>Notify by sms</label>
 
-           <input type="file" class="form-control" name="avatar" />
+               </div>
 
+               <input type="submit" class="btn btn-success" name="submit" value="Update"/>
 
-           <input type="submit" class="btn btn-success" name="submit" value="Update"/>
+               <?php
+                    if($success){
+                        echo "<div class='alert alert-success'>".$success."</div>";
+                    }
+
+                    if($error){
+                        echo "<div class='alert alert-danger'>".$error."</div>";
+                    }
+               ?>
+           </form>
+
 
        </div>
    </div>
