@@ -114,11 +114,55 @@
                 <h4>Subject</h4>
                 <h5>Title</h5>
                 <p>This is a test message...</p>
-                
+                <span class="label label-default">23:34 2015-10-23</span>
+
+                <button name="reply" type="button"  class="btn btn-primary btn-sm" data-toggle="modal" data-target="#replyModal" >Reply</button>
             </div>
+
+            <div>
+                <h4>Subject</h4>
+                <h5>Title</h5>
+                <p>This is a test message...</p>
+                <span class="label label-default">23:34 2015-10-23</span>
+
+                <button name="reply" type="button"  class="btn btn-primary btn-sm" data-toggle="modal" data-target="#replyModal" >Reply</button>
+            </div>
+
+            <div>
+                <h4>Subject</h4>
+                <h5>Title</h5>
+                <p>This is a test message...</p>
+                <span class="label label-default">23:34 2015-10-23</span>
+
+                <button name="reply" type="button"  class="btn btn-primary btn-sm" data-toggle="modal" data-target="#replyModal" >Reply</button>
+            </div>
+
+
         </div>
     </div>
 </div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="replyModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Reply</h4>
+            </div>
+            <form method="post">
+                <div class="modal-body">
+                    <textarea name="textarea" rows="10" cols="50">Write something here</textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
