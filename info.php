@@ -6,6 +6,7 @@
  * Time: 4:41 PM
  */
 include("updateinfo.php");
+error_reporting(0);
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +75,7 @@ include("updateinfo.php");
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="images/Neighbor.png" id="logo"></a>
+            <a class="navbar-brand" href="index.php"><img src="images/Neighbor.png" id="logo"></a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -82,12 +83,13 @@ include("updateinfo.php");
             <ul class="nav navbar-nav ">
                 <li class="active"><a href="info.php">Info</a></li>
                 <li><a href="message.php">Message</a></li>
-                <li><a href="#">Friend</a></li>
-                <li><a href="#">Approve</a></li>
+                <li><a href="friend.php">Friend</a></li>
+                <li><a href="neighbor.php">Neighbor</a></li>
+                <li><a href="approve.php">Approve</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Sign Out</a></li>
+                <li><a href="index.php?logout=1">Sign Out</a></li>
             </ul>
 
         </div><!-- /.navbar-collapse -->

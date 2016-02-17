@@ -12,13 +12,13 @@ include("DataRetrieval.php");
 include("getuseraddress.php");
 
 if($_GET["friendid"]){
-    insertFriendWaitingList($link,$_SESSION['id'],$_GET["friendid"]);
+
+    insertFriend($link,$_SESSION['id'],$_GET["friendid"]);
 }
 
-if(isset($_POST['submit'])&&$_POST['submit']=='Send'){
-    $_POST['sendto'];
-    insertThread($link,$_POST['sendcontent'],"friend",$_POST['sendto']);
-    replyThread($link,$_SESSION['id'],getMaxThread($link),$_POST['sendtitle'],$_POST['sendsubject'],$_POST['sendcontent'],null,null);
+if($_GET["approveid"]){
+
+     insertApproveList($link,$_SESSION['id'],$_GET["approveid"]);
 }
 ?>
 
@@ -97,9 +97,9 @@ if(isset($_POST['submit'])&&$_POST['submit']=='Send'){
             <ul class="nav navbar-nav ">
                 <li><a href="info.php">Info</a></li>
                 <li><a href="message.php">Message</a></li>
-                <li class="active"><a href="friend.php">Friend</a></li>
+                <li><a href="friend.php">Friend</a></li>
                 <li><a href="neighbor.php">Neighbor</a></li>
-                <li><a href="approve.php">Approve</a></li>
+                <li  class="active"><a href="approve.php">Approve</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -120,42 +120,40 @@ if(isset($_POST['submit'])&&$_POST['submit']=='Send'){
             $getaddressresults = mysqli_fetch_array($getaddressresult);
             echo $getaddressresults['Address'];?></h3>
         <div class="col-md-5 whiteBackground">
-            <h3>Exsting Friends</h3>
+            <h3>Waiting to be Friends</h3>
             <?php
-               $result = showFriend($link,$_SESSION['id']);
-
-                while($results = mysqli_fetch_array($result)){
-                    $getname = "SELECT * FROM User WHERE UserId='".$results['fri']."'";
-                    $friresult = mysqli_query($link,$getname);
-                    $friresults = mysqli_fetch_array($friresult);
-
-                    echo "<div>
-                <h4>".$friresults['Name']."</h4>
-                <h5>".$friresults['Address']."</h5>
-                <button name=\"new\" type=\"button\" class=\"btn btn-primary btn-sm\" data-toggle=\"modal\" data-target=\"#newModal\" data-whatever='".$friresults['Name']."' data-sendto='".$friresults['UserId']."'>New</button>
-
-            </div>";
-                }
-
-            ?>
-        </div>
-
-        <div class="col-md-5 whiteBackground">
-            <h3>Add more Friends</h3>
-            <?php
-            $result = findNotFriend($link,$_SESSION['id'],$_SESSION['blockid']);
-
-
+            $result = showFriendWaitingList($link,$_SESSION['id']);
 
             while($results = mysqli_fetch_array($result)){
-                $getname = "SELECT * FROM User WHERE UserId='".$results['Userid']."'";
+                $getname = "SELECT * FROM User WHERE UserId='".$results['FWUserId1']."'";
                 $friresult = mysqli_query($link,$getname);
                 $friresults = mysqli_fetch_array($friresult);
 
                 echo "<div>
                 <h4>".$friresults['Name']."</h4>
                 <h5>".$friresults['Address']."</h5>
-                <button name=\"new\" type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"window.location.href='friend.php?friendid={$results['Userid']}'\">Add</button>
+                <button name=\"new\" type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"window.location.href = 'approve.php?friendid={$results['FWUserId1']}'\">Agree</button>
+
+            </div>";
+            }
+
+            ?>
+        </div>
+
+        <div class="col-md-5 whiteBackground">
+            <h3>waiting to join block</h3>
+            <?php
+            $result = showWaitingList($link,$_SESSION['blockid']);
+
+            while($results = mysqli_fetch_array($result)){
+                $getname = "SELECT * FROM User WHERE UserId='".$results['WUserId']."'";
+                $friresult = mysqli_query($link,$getname);
+                $friresults = mysqli_fetch_array($friresult);
+
+                echo "<div>
+                <h4>".$friresults['Name']."</h4>
+                <h5>".$friresults['Address']."</h5>
+                <button name=\"new\" type=\"button\" class=\"btn btn-primary btn-sm\" onclick=\"window.location.href = 'approve.php?approveid={$results['RequestId']}'\">Agree</button>
 
             </div>";
             }
@@ -164,46 +162,6 @@ if(isset($_POST['submit'])&&$_POST['submit']=='Send'){
         </div>
     </div>
 </div>
-
-<div class="modal fade" tabindex="-1" role="dialog" id="newModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Reply</h4>
-            </div>
-            <form method="post" >
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>To</label>
-                        <input class="form-control" type="text" name="sendto" id="sendto">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Subject</label>
-                        <input class="form-control" type="text" name="sendsubject" placeholder="Subject">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input class="form-control" type="text" name="sendtitle" placeholder="title">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Content</label>
-                        <textarea class="form-control" name="sendcontent" rows="10" cols="80" class="center-block">Write something here</textarea>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <input type="submit" name="submit" class="btn btn-primary" value="Send">
-                </div>
-            </form>
-
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 
 
@@ -217,14 +175,10 @@ if(isset($_POST['submit'])&&$_POST['submit']=='Send'){
     $('#newModal').on('show.bs.modal',function(event){
         var button = $(event.relatedTarget)
         var recipient = button.data('whatever')
-        var id= button.data('sendto')
 
         var modal = $(this)
 
         modal.find('.modal-title').text('Send Message to ' + recipient)
-        modal.find('#sendto').val(id)
-
-
     })
 </script>
 

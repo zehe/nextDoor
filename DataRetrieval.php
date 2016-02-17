@@ -5,6 +5,7 @@
  * Date: 12/17/15
  * Time: 20:42
  */
+error_reporting(0);
 //connect databse
 function connect(){
    if($conn = mysqli_connect('127.0.0.1:3306','root','',"ProjectTest")){
@@ -55,7 +56,7 @@ function insertNeighbor($conn,$NuserId1,$NuserId2){
 }
 
 function showNeighbor($conn,$NuserId1){
-    $res = mysqli_query($conn,"select * from Neighbor where NuserId1 = ".$NuserId1);
+    $res = mysqli_query($conn,"select Name, Address,Userid from Neighbor, User where User.UserId = Neighbor.NuserId2 and NuserId1 = ".$NuserId1);
     return $res;
 }
 
@@ -172,19 +173,19 @@ function showSentMessage($conn, $UserId){
 }
 
 function showBlockMessage($conn,$BlockId){
-    $res = mysqli_query($conn,"select * from Message natural join Thread where VisibleType = 'block' and VisibleTo = ".$BlockId);
+    $res = mysqli_query($conn,"select MessageId, Subject, Title, Name, PostTime, PostId, Data from Message, Thread, User where VisibleType = 'block' and VisibleTo = ".$BlockId." and User.UserId = Message.PostId and Message.ThreadId = Thread.ThreadId");
     return $res;
 }
 
-function showHoodMeaage($conn,$BlockId){
+function showHoodMessage($conn,$BlockId){
     $res = mysqli_query($conn,"select hoodid from Block where Blockid = ".$BlockId);
     $row = mysqli_fetch_array($res);
-    $res = mysqli_query($conn, "select * from Message natural join Thread WHERE VisibleType = 'hood' and VisibleTo = ".$row[0]);
+    $res = mysqli_query($conn, "SELECT MessageId, Subject, Title, Name, PostTime, PostId, Data FROM Message,User,Thread WHERE User.UserId=Message.PostId and Message.ThreadId = Thread.ThreadId and Thread.VisibleType='hood'and Thread.Visibleto=".$row[0]);
     return $res;
 }
 
 function showFriendMessage($conn, $UserId){
-    $res = mysql_query($conn, "select * from Message natural join Thread where VisibleType = 'friend' and VisibleTo = ".$UserId);
+    $res = mysqli_query($conn, "select MessageId, Subject, Title, Name, PostTime, PostId, Data from Message, Thread, User where VisibleType = 'friend' and VisibleTo = ".$UserId." and User.UserId = Message.PostId and Message.ThreadId = Thread.ThreadId");
     return $res;
 }
 
@@ -244,6 +245,102 @@ function sendMail($conn,$UserId){
     $row = mysqli_fetch_row($res);
     $email = $row[0];
     mail($email,"NEW Message","You got a new message");
+}
+
+/**
+ * @param $conn
+ * @param $UserId
+ * @param $BlcokId
+ */
+function findNotFriend($conn, $UserId, $BlockId){
+    $res = mysqli_query($conn, "select Hoodid from Block where BlockId = ".$BlockId);
+    $row = mysqli_fetch_array($res);
+    $res2 = mysqli_query($conn,"select Userid, Name, Address from User where blockid in (select blockid from Block where hoodid = ".$row[0].")
+and userid not in (select FUserid2 as userid from friend where FUserId1 = ".$UserId.")
+and userid not in (select Fuserid1 as userid from friend where Fuserid2 = ".$UserId.") and UserId !=".$UserId);
+    return $res2;
+}
+
+//any user  can be only one member of a block.
+function isMember($conn,$Userid){
+    $res = mysqli_query($conn,"select MuserId from member where MuserId = ".$Userid);
+    if(mysqli_num_rows($res)>0){
+    return true;
+    }
+    return false;
+}
+function getHoodId($conn, $BlockId){
+    $res = mysqli_query($conn,"Select Hoodid from Block where blockId = ".$BlockId);
+    $row = mysqli_fetch_array($res);
+    return $row[0];
+}
+
+function getMaxThread($conn){
+    $res = mysqli_query($conn,"select threadId from THread ORDER by threadId DESC limit 1");
+    $row = mysqli_fetch_array($res);
+    return $row[0];
+}
+
+function findnotNeighbor($conn,$UserId,$BlockId){
+    return $res = mysqli_query($conn,"select Userid, Name, Address from user where userid not in (select NUserid2 from Neighbor where NUserId1 = ".$UserId." ) and blockid = ".$BlockId);
+}
+
+function getaddress($address){
+    // url encode the address
+    $address = urlencode($address);
+
+    // google map geocode api url
+    $url = "https://maps.googleapis.com/maps/api/geocode/json?address={$address}&key=AIzaSyDxgb9HBTqkXFW1AQOJd8dbrtw41bJhOQk";
+
+    // get the json response
+    $resp_json = file_get_contents($url);
+
+    // decode the json
+    $resp = json_decode($resp_json, true);
+
+    // response status will be 'OK', if able to geocode given address
+    if($resp['status']=='OK'){
+
+        $data_arr = array();
+        foreach ($resp["results"] as $result) {
+            foreach ($result["address_components"] as $address) {
+                if (in_array("street_number", $address["types"])) {
+                    array_push($data_arr,$address["long_name"]);
+                }
+            }
+        }
+        foreach ($resp["results"] as $result) {
+            foreach ($result["address_components"] as $address) {
+                if (in_array("route", $address["types"])) {
+                    array_push($data_arr,$address["long_name"]);
+                }
+            }
+        }
+        foreach ($resp["results"] as $result) {
+            foreach ($result["address_components"] as $address) {
+                if (in_array("neighborhood", $address["types"])) {
+                    array_push($data_arr,$address["long_name"]);
+                }
+            }
+        }
+        return $data_arr;
+    }else{
+        return false;
+    }
+}
+
+
+function getBlockId($conn,$route,$neighborhood){
+    $res = mysqli_query($conn, "select blockid from Block natural join Hood where route = '".$route."' and neighborhood = '".$neighborhood."'");
+    $row = mysqli_fetch_array($res);
+    return $row[0];
+}
+
+function isMoveout($conn,$route,$neighborhood,$block){
+    if(getBlockId($conn,$route,$neighborhood) != $block){
+    return true;
+}
+return false;
 }
 ?>
 

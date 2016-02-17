@@ -5,19 +5,16 @@
  * Date: 12/23/15
  * Time: 16:56
  */
+error_reporting(0);
 include("DataRetrieval.php");
-if(connect()==false){
-    echo "connect_fail!";
-}
-else{
-    $conn = connect();
-    echo "connect_done ";
-}
 
-#echo mysqli_num_rows($res);
-if(insertApproveList($conn,99,2)){
-    echo "ok";
-}else {
-    echo "die";
-}
+
+
+include("getaddress.php");
+
+$temp = getaddress("348 61st St Brooklyn");
+
+echo $temp[0];
+echo $temp[1];
+echo $temp[2];
 ?>

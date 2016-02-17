@@ -6,7 +6,7 @@
  * Time: 5:20 PM
  */
 include("login.php");
-
+error_reporting(0);
 ?>
 
 <!DOCTYPE html>
@@ -84,9 +84,9 @@ include("login.php");
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbarlink">
             <ul class="nav navbar-nav ">
-                <li class="active"><a href="#">Home<span class="sr-only">(current)</span></a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Developer</a></li>
+                <li class="active"><a href="index.php">Home<span class="sr-only">(current)</span></a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="Developer.html">Developer</a></li>
             </ul>
 
             <form class="navbar-form navbar-right" method="post">
@@ -154,17 +154,58 @@ include("login.php");
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="js/bootstrap.min.js"></script>
 <script src="http://maps.googleapis.com/maps/api/js"></script>
-<script>
-    function initialize() {
-        var mapProp = {
-            center:new google.maps.LatLng(40.640737, -74.020015),
-            zoom:10,
-            mapTypeId:google.maps.MapTypeId.ROADMAP
+    <script type="text/javascript">
+    var map;
+    var marker;
+    var myLatlng = new google.maps.LatLng(40.6407442,-74.0202356);
+    var geocoder = new google.maps.Geocoder();
+    var infowindow = new google.maps.InfoWindow();
+
+    function initialize(){
+        var mapOptions = {
+            zoom: 15,
+            center: myLatlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+
         };
-        var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+        map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
+
+        marker = new google.maps.Marker({
+            map: map,
+            position: myLatlng,
+            draggable: true
+        });
+
+        geocoder.geocode({'latLng': myLatlng }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    $('#latitude,#longitude').show();
+                    $('#registeraddress').val(results[0].formatted_address);
+                    infowindow.setContent(results[0].formatted_address);
+                    infowindow.open(map, marker);
+                }
+            }
+        });
+
+        google.maps.event.addListener(marker, 'dragend', function() {
+
+            geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+                        $('#registeraddress').val(results[0].formatted_address);
+                        infowindow.setContent(results[0].formatted_address);
+                        infowindow.open(map, marker);
+                    }
+                }
+            });
+        });
+
     }
     google.maps.event.addDomListener(window, 'load', initialize);
+</script>
 
+<script>
     $("#registerbtn").click(function(event){
 
         event.preventDefault();

@@ -21,33 +21,51 @@ function getaddress($address){
     // response status will be 'OK', if able to geocode given address
     if($resp['status']=='OK'){
 
-        // get the important data
-        $lati = $resp['results'][0]['geometry']['location']['lat'];
-        $longi = $resp['results'][0]['geometry']['location']['lng'];
-        $formatted_address = $resp['results'][0]['formatted_address'];
-
-        // verify if data is complete
-        if($lati && $longi && $formatted_address){
-
-            // put the data in the array
-            $data_arr = array();
-
-            array_push(
-                $data_arr,
-                $lati,
-                $longi,
-                $formatted_address
-            );
-
-            return $data_arr;
-
-        }else{
+//        // get the important data
+//        $lati = $resp['results'][0]['geometry']['location']['lat'];
+//        $longi = $resp['results'][0]['geometry']['location']['lng'];
+//        $formatted_address = $resp['results'][0]['formatted_address'];
+//
+//        // verify if data is complete
+//        if($lati && $longi && $formatted_address){
+//
+//            // put the data in the array
+//            $data_arr = array();
+//
+//            array_push(
+//                $data_arr,
+//                $lati,
+//                $longi,
+//                $formatted_address
+//            );
+//
+//            return $data_arr;
+        $data_arr = array();
+        foreach ($resp["results"] as $result) {
+            foreach ($result["address_components"] as $address) {
+                if (in_array("street_number", $address["types"])) {
+                    array_push($data_arr,$address["long_name"]);
+                }
+            }
+        }
+        foreach ($resp["results"] as $result) {
+            foreach ($result["address_components"] as $address) {
+                if (in_array("route", $address["types"])) {
+                    array_push($data_arr,$address["long_name"]);
+                }
+            }
+        }
+        foreach ($resp["results"] as $result) {
+            foreach ($result["address_components"] as $address) {
+                if (in_array("neighborhood", $address["types"])) {
+                    array_push($data_arr,$address["long_name"]);
+                }
+            }
+        }
+        return $data_arr;
+    }else{
             return false;
         }
-
-    }else{
-        return false;
-    }
 }
 
 ?>

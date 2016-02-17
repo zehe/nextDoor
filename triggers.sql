@@ -13,10 +13,12 @@ where NUserId1 = new.MoveUserId or NUserId2 = new.MoveUserId;
 update User
 set User.blockid = new.blockId
 where User.userId = new.MoveUserId;
+delete from Member
+where MUserId = new.MoveUserId;
 end
 $$
 # this trigger is to delete useless data in friendwaitinglist when insert friend
-Drop Trigger FRIEND;$$
+# Drop Trigger FRIEND;$$
 create trigger FRIEND BEFORE INSERT ON friend
 for each row
 begin

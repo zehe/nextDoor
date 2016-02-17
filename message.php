@@ -6,7 +6,9 @@
  * Time: 4:41 PM
  */
  
- include("getmessage.php");
+include("getmessage.php");
+include("getuseraddress.php");
+error_reporting(0);
 ?>
 
 
@@ -84,12 +86,13 @@
             <ul class="nav navbar-nav ">
                 <li><a href="info.php">Info</a></li>
                 <li class="active"><a href="message.php">Message</a></li>
-                <li><a href="#">Friend</a></li>
-                <li><a href="#">Approve</a></li>
+                <li><a href="friend.php">Friend</a></li>
+                <li><a href="neighbor.php">Neighbor</a></li>
+                <li><a href="approve.php">Approve</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Sign Out</a></li>
+                <li><a href="index.php?logout=1">Sign Out</a></li>
             </ul>
 
         </div><!-- /.navbar-collapse -->
@@ -102,14 +105,24 @@
 <div class="container">
     <div class="row" id="topRow">
 
-        <h3>Address: 348 61st St.</h3>
+        <h3>Address: <?php
+            $getaddressresults = mysqli_fetch_array($getaddressresult);
+            echo $getaddressresults['Address'];?></h3>
+
+        <form method="post">
+            <div class="form-group">
+                <label for="updatename">Name:</label>
+                <input type="text" class="form-control input-sm" placeholder="Search" name="search""/>
+                <input type="submit" name="submit" class="btn btn-default btn-sm" value="Search"/>
+            </div>
+        </form>
         <div class="col-md-2">
             <div class="btn-group-vertical text-center" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newModal">New</button>
                 <form method="post">
-                    <input type="submit" class="btn btn-default form-control" value="Hood">
-                    <input type="submit" class="btn btn-default form-control" value="Block">
-                    <input type="submit" class="btn btn-default form-control" value="Friend">
+                    <input name='submit' type="submit" class="btn btn-default form-control" value="Hood">
+                    <input name='submit' type="submit" class="btn btn-default form-control" value="Block">
+                    <input name='submit' type="submit" class="btn btn-default form-control" value="Friend">
                 </form>
 
             </div>
@@ -126,6 +139,8 @@
             }
             ?>
 
+
+
             <?php
                 while($results = mysqli_fetch_array($result)){
                     //$_SESSION['replyid']=$results['PostId'];
@@ -135,7 +150,7 @@
                 <p>".$results['Data']."</p>
                 <span class=\"label label-default\">".$results['PostTime']."</span>
 
-                <button name=\"reply\" type=\"button\"  class=\"btn btn-primary btn-sm\" data-toggle=\"modal\" data-target=\"#replyModal\" data-whatever='".$results['Name']."'>Reply</button>
+                <button name=\"reply\" type=\"button\" class=\"btn btn-primary btn-sm\" data-toggle=\"modal\" data-target=\"#replyModal\" data-whatever='".$results['Name']."' data-sendto='".$results['MessageId']."'>Reply</button>
 
             </div>";
 
@@ -155,6 +170,12 @@
             </div>
             <form method="post">
                 <div class="modal-body">
+
+                    <div class="form-group">
+                        <label>To</label>
+                        <input class="form-control" type="text" name="sendto" id="sendto">
+                    </div>
+
                     <div class="form-group">
                         <label>Subject</label>
                         <input class="form-control" type="text" name="replysubject" placeholder="subject">
@@ -190,6 +211,8 @@
             </div>
             <form method="post">
                 <div class="modal-body">
+
+
                     <div class="form-group">
                         <label>Subject</label>
                         <input class="form-control" type="text" name="newsubject" placeholder="subject" value="">
@@ -203,6 +226,12 @@
                     <div class="form-group">
                         <label>Content</label>
                         <textarea class="form-control" name="newcontent" rows="10" cols="80" class="center-block">Write something here</textarea>
+                    </div>
+
+                    <div class="form-control">
+                        <label>Send To:</label>
+                        <label class="radio-inline"><input type="radio" name="sendto" value="hood">Hood</label>
+                        <label class="radio-inline"><input type="radio" name="sendto" value="block">Block</label>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -227,10 +256,12 @@
     $('#replyModal').on('show.bs.modal',function(event){
         var button = $(event.relatedTarget)
         var recipient = button.data('whatever')
+        var id= button.data('sendto')
 
         var modal = $(this)
 
         modal.find('.modal-title').text('Reply Message to ' + recipient)
+        modal.find('#sendto').val(id)
     })
 </script>
 
